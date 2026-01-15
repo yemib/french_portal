@@ -1,0 +1,78 @@
+.no-padding {
+    padding: 0;
+}
+.no-padding-right {
+    padding-right: 0;
+}
+.no-padding-left {
+    padding-left: 0;
+}
+.modal-header {
+    padding: 15px 15px 10px;
+}
+.widget-chart-one .mdi {
+    font-size: 60px;
+    color: #FFF;
+}
+.student-profile-box .avatar img {
+    max-width: 100%;
+}
+.accounts-header {
+    background-color: #FFF;
+    /*padding-top: 30px;
+    padding-bottom: 30px;*/
+}
+.account-pages {
+    vertical-align: inherit;
+    padding-top: 7em;
+}
+.navbar-custom .logo {
+    background-color: #FFF;
+    text-align: left;
+}
+.navbar-custom .logo img {
+    height: 50px;
+}
+.modal-body table {
+    font-size: xx-small !important;
+}
+.bulk-upload-guidelines table th {
+    text-align: center;
+    background-color: #0c5460;
+    color: #FFF;
+}
+.bulk-upload-guidelines-header {
+    margin-bottom: 10px;
+    font-size: smaller;
+    font-weight: bold;
+    text-align: center;
+}
+.bg-account-pages {
+    background-image: url("../images/client-school.jpeg");
+    background-position: center;
+    background-size: cover;
+}
+.bg-account-pages section {
+    background: rgba(256, 256, 256, 0.5);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.account-box {
+    box-shadow: 0 0 45px 0 rgb(0, 0, 0);
+}
+
+@media (max-width: 768px) {
+    .table th {
+        padding: 5px;
+        font-size: x-small;
+    }
+    .table td {
+        font-size: x-small;
+    }
+    .table td .btn {
+        font-size: x-small;
+    }
+    .logo-sm img {
+        margin-left: 10px;
+    }
+}

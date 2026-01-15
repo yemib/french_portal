@@ -1,0 +1,103 @@
+<header id="topnav" class="topbar-light">
+    <nav class="navbar-custom">
+        <ul class="list-unstyled topbar-right-menu float-right mb-0">
+            <li class="dropdown notification-list d-none">
+                <a class="nav-link dropdown-toggle arrow-none" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                    <i class="dripicons-bell noti-icon"></i> <span class="badge badge-info noti-icon-badge">21</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-lg">
+                    <div class="dropdown-item noti-title">
+                        <h5 class="m-0">
+                                <span class="float-right">
+                                    <a href="#" class="text-dark">
+                                        <small>Clear All</small>
+                                    </a>
+                                </span>Notification
+                        </h5>
+                    </div>
+                    <div class="slimscroll noti-scroll">
+                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <div class="notify-icon bg-warning">
+                                <i class="mdi mdi-comment-account-outline"></i>
+                            </div>
+                            <p class="notify-details">Caleb Flakelar commented on Admin<small class="text-muted">1 min ago</small>
+                            </p>
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <div class="notify-icon bg-info">
+                                <i class="mdi mdi-account-plus"></i>
+                            </div>
+                            <p class="notify-details">New user registered.<small class="text-muted">5 hours ago</small>
+                            </p>
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <div class="notify-icon">
+                                <img src="assets/images/users/avatar-2.jpg" class="img-fluid rounded-circle" alt="">
+                            </div>
+                            <p class="notify-details">Cristina Pride</p>
+                            <p class="text-muted font-13 mb-0 user-msg">Hi, How are you? What about our next meeting</p>
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <div class="notify-icon bg-danger">
+                                <i class="mdi mdi-comment-account-outline"></i>
+                            </div>
+                            <p class="notify-details">Caleb Flakelar commented on Admin<small class="text-muted">4 days ago</small>
+                            </p>
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <div class="notify-icon">
+                                <img src="assets/images/users/avatar-4.jpg" class="img-fluid rounded-circle" alt="">
+                            </div>
+                            <p class="notify-details">Karen Robinson</p>
+                            <p class="text-muted font-13 mb-0 user-msg">Wow that's great</p>
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <div class="notify-icon bg-primary">
+                                <i class="mdi mdi-heart"></i>
+                            </div>
+                            <p class="notify-details">Carlos Crouch liked <b>Admin</b>
+                                <small class="text-muted">13 days ago</small>
+                            </p>
+                        </a>
+                    </div>
+                    <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">View all <i class="fi-arrow-right"></i>
+                    </a>
+                </div>
+            </li>
+            <li class="dropdown notification-list">
+                <a class="nav-link dropdown-toggle nav-user" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                    <img src="{{ asset((auth()->user()->avatar) ? "storage/images/avatar/".auth()->user()->id."/".auth()->user()->avatar : "_dashboard/assets/images/users/avatar-1.jpg") }}" alt="user" class="rounded-circle"> <span class="ml-1">{{ ucwords(auth()->user()->full_name) }}<i class="mdi mdi-chevron-down"></i>
+                    </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated profile-dropdown">
+                    <div class="dropdown-item noti-title">
+                        <h6 class="text-overflow m-0">Welcome {{ auth()->user()->role }}!</h6>
+                    </div>
+                    <a href="{{ url("logout") }}" class="dropdown-item notify-item">
+                        <i class="dripicons-power"></i> <span>Logout</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+        <ul class="list-unstyled menu-left mb-0">
+            <li class="float-left">
+                <a href="{{ route("home") }}" class="logo">
+                    <span class="logo-lg">
+                        <img src="{{ asset("images/Nigeria-French-Language-Village-NFLV.jpg") }}" alt="">
+                    </span>
+                    <span class="logo-sm">
+                        <img src="{{ asset("images/logo-sm.png") }}" alt="">
+                    </span>
+                </a>
+            </li>
+            <li class="float-left">
+                <a class="button-menu-mobile open-left navbar-toggle">
+                    <div class="lines">
+                        <span>    </span> <span></span> <span></span>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <!-- end navbar-custom -->
+</header>
