@@ -55,19 +55,35 @@ class RegisterController extends Controller
 
 
 
-        public function showRegistrationForm()
+    public function showRegistrationForm()
     {
+
+
+         
+
         $programs = Program::get();
         $schools = Setting::orderBy("school_title", "asc")->get();
 
         //check if the payment session is created or not...
 
-        if (!session('confirm_payment')) {
+       if (!session('confirm_payment')) {
 
             return redirect()->route('registration_payment');
-        }
+        }  
 
         return view('auth.register', compact('programs', "schools"));
+    }
+
+
+    public function viewApplication($id)
+    {
+        if (!session()->has('download_application_form')) {
+            return redirect()->route('confirm_registration_code_view')->with('danger', 'Unauthorized access to application view');
+        }
+        //remove the session
+        session()->forget('download_application_form');
+        $application_form = ApplicationForm::findOrFail($id);
+        return view('admin.applications.general_application_view', compact('application_form'));
     }
 
     /**
@@ -112,9 +128,7 @@ class RegisterController extends Controller
             "sex" => "bail|required|string",
             "marital_status" => "bail|required|string",
             "phone" => "bail|required|string",
-            "year_of_birth" => "bail|required|string",
-            "month_of_birth" => "bail|required|string",
-            "day_of_birth" => "bail|required|string",
+
             "nationality" => "bail|required|string",
             "state_of_origin" => "bail|required|string",
             "place_of_birth" => "bail|required|string",
@@ -189,9 +203,8 @@ class RegisterController extends Controller
 
                     Schema::table($tableName, function (Blueprint $table) use ($key, $value) {
 
-                    
-                            $table->text($key)->nullable();
-                        
+
+                        $table->text($key)->nullable();
                     });
                 }
             }
@@ -253,7 +266,7 @@ class RegisterController extends Controller
         $application_form->sex = $request->sex;
         $application_form->marital_status = $request->marital_status;
         $application_form->phone = $request->phone;
-        $application_form->dob = Carbon::create($request->year_of_birth, $request->month_of_birth, $request->day_of_birth)->toDateString();
+        $application_form->dob = $request->dob;
         $application_form->nationality = $request->nationality;
         $application_form->state_of_origin = $request->state_of_origin;
         $application_form->place_of_birth = $request->place_of_birth;
@@ -263,7 +276,7 @@ class RegisterController extends Controller
         $application_form->next_of_kin_relationship = $request->next_of_kin_relationship;
         $application_form->next_of_kin_occupation = $request->next_of_kin_occupation;
         $application_form->next_of_kin_address = $request->next_of_kin_address;
-        $application_form->nysc_status = $request->nysc_status;
+
         $application_form->had_disability = $request->had_disability;
         $application_form->had_disability_yes = $request->had_disability_yes;
         $application_form->level_of_french_proficiency = $request->level_of_french_proficiency;
@@ -309,21 +322,10 @@ class RegisterController extends Controller
         $application_form->secondary_education_subject_8 = $request->secondary_education_subject_8;
         $application_form->secondary_education_grade_8 = $request->secondary_education_grade_8;
         $application_form->secondary_education_subject_9 = $request->secondary_education_subject_9;
-
-
         $application_form->secondary_education_grade_9 = $request->secondary_education_grade_9;
-
-
-
         $application_form->remita = (session('confirm_payment')) ? session('confirm_payment') : '  ';
 
-
-
         $application_form->paid =  true;
-
-
-
-
 
         $application_form->save();
 
@@ -365,7 +367,31 @@ class RegisterController extends Controller
 
 
 
-        return view('download_application_pdf')->with('id', $id);
+        try {
+
+            if ($application_form = ApplicationForm::find($id)) {
+                $application_form->institution = (!is_null($application_form->any_post_secondary_qualification_institution)) ?
+                    Setting::find($application_form->any_post_secondary_qualification_institution)->school_title : "None";
+                     $request->session()->put('download_application_form', $application_form->id);
+
+        return redirect()->route('view_application_now', ['id' => $application_form->id]);
+
+                //return view("admin.applications.general_application_view", compact("application_form"));
+            }
+
+
+            return redirect()->back()->with("danger", "Application not found");
+
+
+          
+        } catch (\Exception $exception) {
+
+            return redirect()->back()->with("danger", "An error occurred");
+        }
+
+
+
+        //return view('download_application_pdf')->with('id', $id);
 
 
 

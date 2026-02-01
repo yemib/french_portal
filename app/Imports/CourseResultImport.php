@@ -3,171 +3,138 @@
 namespace App\Imports;
 
 use App\Http\Models\result;
-use App\Http\Models\results_format;
-use App\Http\Models\program;
-use App\Http\Models\setting;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
-
-
-class CourseResultImport implements ToModel
+class CourseResultImport extends \PhpOffice\PhpSpreadsheet\Cell\DefaultValueBinder
+implements ToCollection, WithHeadingRow, WithCustomValueBinder
 {
-	protected $extra_array;
+	protected $extra;
 
-	protected $x;
-
-	public function __construct($extra_array)
+	public function __construct($extra)
 	{
-		$this->extra_array = $extra_array;
-
-		$this->x = 0;
+		$this->extra = $extra;
 	}
 
-	/**
-	 * @param array $row
-	 *
-	 * @return Model|Model[]|null
-	 */
-	public function model(array $row)
+	public function collection(Collection $rows)
 	{
-
-
-		$total_column = 	count($row);
-
-		// constant values  
-		$program = program::find($this->extra_array["program"]);
-
-
-
-		$school   =  setting::find($this->extra_array["school"]);
-
-
-
-		$known_column_total =  3 + 4;
-
-		$leght_of_course = $total_column  - $known_column_total;
-
-
-
-		$leght_of_last_col =   $leght_of_course  +  3;
-
-		//$starting_value_of_d_lastcolum =   $leght_of_course + 1 ; 
-
-
-
-		if (!is_string($row[0])) {
-
-
-
-			$result  = new result();
-
-
-			for ($x = 0; $x <   $leght_of_course; $x++) {
-
-
-
-				$result  = new result();
-
-
-
-				$result->matric = $row[1];
-				$result->name = $row[2];
-
-
-				$result->from_date  =  $this->extra_array["from_date"];
-
-
-				$result->to_date  =  $this->extra_array["to_date"];
-
-
-				$result->program  = $program->title;
-
-				$result->school = $school->school_title;
-
-				$result->program_id = $this->extra_array["program"];
-
-				$result->school_id = $this->extra_array["school"];
-
-				$result->session = $this->extra_array["session"];
-
-
-
-
-				// changing values  
-
-
-
-
-				$result->courses = $row[3 +   $x];
-
-
-				$result->total = $row[($leght_of_last_col)];
-				$result->average = $row[($leght_of_last_col + 1)];
-
-
-				$result->grade = (isset($row[($leght_of_last_col + 2)])) ?   $row[($leght_of_last_col + 2)]  : '    ';
-
-
-
-				$result->remark = (isset($row[($leght_of_last_col + 3)])) ? $row[($leght_of_last_col + 3)]  :  '  ';
-
-				$result->save();
-			}
-
-
-
-			return $result;
+		if ($rows->isEmpty()) {
+			return;
 		}
 
-		if (is_string($row[0])) {
+		/*
+        |------------------------------------------------------------
+        | GET HEADERS (CORRECTLY)
+        |------------------------------------------------------------
+        */
+		$headers = array_keys($rows->first()->toArray());
+		$totalColumns = count($headers);
 
-			for ($x = 0; $x <   $leght_of_course; $x++) {
-
-				$result_format  = new results_format();
-
-				$result_format->matric = $row[1];
-				$result_format->name = $row[2];
-
-				$result_format->from_date  =  $this->extra_array["from_date"];
-
-				$result_format->to_date  =  $this->extra_array["to_date"];
-
-				$result_format->program  = $program->title;
-
-				$result_format->school = $school->school_title;
-
-				$result_format->program_id = $this->extra_array["program"];
-
-				$result_format->school_id = $this->extra_array["school"];
-
-				$result_format->session = $this->extra_array["session"];
-
-
-				// changing values  
-
-
-				$result_format->courses = $row[3 +   $x];
-				$result_format->total = $row[($leght_of_last_col)];
-				$result_format->average = $row[($leght_of_last_col + 1)];
-
-				$result_format->grade = (isset($row[($leght_of_last_col + 2)])) ?  $row[($leght_of_last_col + 2)] : ' ';
-
-				$result_format->remark = (isset($row[($leght_of_last_col + 3)])) ? $row[($leght_of_last_col + 3)]   : '  ';
-				$result_format->save();
-			}
-
-
-			$this->x++;
-
-			return $result_format;
+		if ($totalColumns < 9) {
+			return;
 		}
 
+		/*
+        |------------------------------------------------------------
+        | FIXED COLUMN INDEXES
+        |------------------------------------------------------------
+        */
+		$SN_INDEX      = 0;
+		$MATRIC_INDEX  = 1;
+		$NAME_INDEX    = 2;
+		$SEX_INDEX 		= 3 ;
+		$GRP_INDEX     = 4;
 
+		$TOTAL_INDEX   = $totalColumns - 4;
+		$AVERAGE_INDEX = $totalColumns - 3;
+		$GRADE_INDEX   = $totalColumns - 2;
+		$REMARK_INDEX  = $totalColumns - 1;
 
+		/*
+        |------------------------------------------------------------
+        | COURSE RANGE
+        |------------------------------------------------------------
+        */
+		$COURSE_START = 5;
+		$COURSE_END   = $TOTAL_INDEX - 1;
 
-		return   null;
+		foreach ($rows as $row) {
+
+			// Convert row safely to indexed array
+			$rowValues = array_values($row->toArray());
+
+			if (
+				empty($rowValues[$MATRIC_INDEX]) ||
+				empty($rowValues[$NAME_INDEX])
+			) {
+				continue;
+			}
+
+			$matric  = $rowValues[$MATRIC_INDEX];
+			$name    = $rowValues[$NAME_INDEX];
+			$sex     = $rowValues[$SEX_INDEX] ?? null;
+			$grp     = $rowValues[$GRP_INDEX] ?? null;
+			$total   = $rowValues[$TOTAL_INDEX] ?? null;
+			$average = $rowValues[$AVERAGE_INDEX] ?? null;
+			$grade   = $rowValues[$GRADE_INDEX] ?? null;
+			$remark  = $rowValues[$REMARK_INDEX] ?? null;
+
+			/*
+            |------------------------------------------------------------
+            | LOOP COURSES
+            |------------------------------------------------------------
+            */
+			for ($i = $COURSE_START; $i <= $COURSE_END; $i++) {
+
+				if (!isset($headers[$i])) {
+					continue;
+				}
+
+				$courseName  = strtoupper(trim($headers[$i]));
+				$courseScore = $rowValues[$i] ?? null;
+
+				if ($courseScore === null || $courseScore === '') {
+					continue;
+				}
+
+				result::create([
+					'student_id' => 1, // replace later
+					'matric'  =>  $matric , 
+					'name'    =>  $name ,
+					'sex'     =>  $sex ,
+					'grp'   =>  $grp ,
+					'course'     => $courseName,
+					'score'      => (int) $courseScore,
+					'total'      => $total,
+					'average'    => $average,
+					'grade'      => $grade,
+					'remark'     => $remark,
+					'program'    => $this->extra['program'] ?? null,
+					'school'     => $this->extra['school'] ?? null,
+					'session'    => $this->extra['session'] ?? null,
+					'from_date'  => $this->extra['from_date'] ?? null,
+					'to_date'    => $this->extra['to_date'] ?? null,
+				]);
+			}
+		}
+	}
+
+	/*
+    |------------------------------------------------------------
+    | ENSURE NUMBERS ARE NOT AUTO-CONVERTED
+    |------------------------------------------------------------
+    */
+	public function bindValue(Cell $cell, $value)
+	{
+		if (is_numeric($value)) {
+			$cell->setValueExplicit($value, DataType::TYPE_STRING);
+			return true;
+		}
+
+		return parent::bindValue($cell, $value);
 	}
 }

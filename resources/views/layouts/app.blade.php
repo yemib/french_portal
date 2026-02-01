@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>{{ config("app.name") }} | @yield("page_title", "Welcome")</title>
@@ -27,103 +28,112 @@
     @yield("page_styles")
 </head>
 
-@if(in_array(Route::currentRouteName(), ["login", "logout", "register", "password.request", "password.email", "password.reset", "password.update", "verification.notice", "verification.verify", "verification.resend", "make-application-payment"]))
+@if(in_array(Route::currentRouteName(), ["login", "logout", "register", "password.request",
+"password.email", "password.reset", "password.update", "verification.notice", "verification.verify", "verification.resend", "make-application-payment"]))
 
-    <body class="bg-account-pages">
+<body class="bg-account-pages">
 
-        @include("layouts.accounts_header")
+    @include("layouts.accounts_header")
 
-        <section>
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="wrapper-page">
-                            @yield("page_content")
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- jQuery  -->
-        <script src="{{ asset("_dashboard/assets/libs/jquery/jquery.min.js") }}"></script>
-        <script src="{{ asset("_dashboard/assets/libs/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
-        <script src="{{ asset("_dashboard/assets/libs/jquery-slimscroll/jquery.slimscroll.min.js") }}"></script>
-        <script src="{{ asset("_dashboard/assets/libs/metismenu/metisMenu.min.js") }}"></script>
-        <!-- App js -->
-        <script src="{{ asset("_dashboard/assets/js/jquery.core.js") }}"></script>
-        <script src="{{ asset("_dashboard/assets/js/jquery.app.js") }}"></script>
-
-    @yield("page_scripts")
-    </body>
-
-@else
-
-    <body>
-        <div id="wrapper">
-
-            @include("layouts.header")
-
-            @include("layouts.left_nav")
-
-            <div class="content-page">
-                <div class="content">
-                    <div class="container-fluid">
-
-                        @include("layouts.alerts")
-
-                     
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="wrapper-page">
                         @yield("page_content")
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            @include("layouts.footer")
+    <!-- jQuery  -->
+    <script src="{{ asset("_dashboard/assets/libs/jquery/jquery.min.js") }}"></script>
+    <script src="{{ asset("_dashboard/assets/libs/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
+    <script src="{{ asset("_dashboard/assets/libs/jquery-slimscroll/jquery.slimscroll.min.js") }}"></script>
+    <script src="{{ asset("_dashboard/assets/libs/metismenu/metisMenu.min.js") }}"></script>
+    <!-- App js -->
+    <script src="{{ asset("_dashboard/assets/js/jquery.core.js") }}"></script>
+    <script src="{{ asset("_dashboard/assets/js/jquery.app.js") }}"></script>
 
-            @include("layouts.right_nav")
+    @yield("page_scripts")
+</body>
 
+@else
+
+<body>
+    <div id="wrapper">
+
+        @if(isset(auth()->user()->id))
+
+        @include("layouts.header")
+
+        @include("layouts.left_nav")
+
+        @endif
+
+
+        @yield("application_area")
+
+        <div class="content-page">
+            <div class="content">
+                <div class="container-fluid">
+
+                    @include("layouts.alerts")
+
+
+                    @yield("page_content")
+                </div>
+            </div>
         </div>
 
-        <!-- jQuery  -->
-        <script src="{{ asset("_dashboard/assets/libs/jquery/jquery.min.js") }}"></script>
-        <script src="{{ asset("_dashboard/assets/libs/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
-        <script src="{{ asset("_dashboard/assets/libs/jquery-slimscroll/jquery.slimscroll.min.js") }}"></script>
-        <script src="{{ asset("_dashboard/assets/libs/metismenu/metisMenu.min.js") }}"></script>
+        @include("layouts.footer")
 
-        <!-- Datatable js -->
-        <script src="{{ asset("_dashboard/assets/libs/datatables.net/js/jquery.dataTables.min.js") }}"></script>
-        
-        
-        <script src="{{ asset("_dashboard/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js") }}"></script>
-        
-        
-        
-        <script src="{{ asset("_dashboard/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js") }}"></script>
-        
-        <script src="{{ asset("_dashboard/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js") }}"></script>
-        
-        <!-- KNOB JS -->
-        <script src="{{ asset("_dashboard/assets/libs/jquery-knob/jquery.knob.min.js") }}"></script>
-        <!-- App js -->
-        
-        <script src="{{ asset("_dashboard/assets/js/jquery.core.js") }}"></script>
-        
-        <script src="{{ asset("_dashboard/assets/js/jquery.app.js") }}"></script>
+        @include("layouts.right_nav")
 
-        {{--Sweet alert--}}
-        
-        <script src="{{ asset("_dashboard/assets/libs/sweetalert2/sweetalert2.min.js") }}"></script>
-        
-        
-        @include('script')
-        
-        
-        @yield("page_scripts")
+    </div>
 
-   
-   
-   @include('alertcon')
-    </body>
+    <!-- jQuery  -->
+    <script src="{{ asset("_dashboard/assets/libs/jquery/jquery.min.js") }}"></script>
+    <script src="{{ asset("_dashboard/assets/libs/bootstrap/js/bootstrap.bundle.min.js") }}"></script>
+    <script src="{{ asset("_dashboard/assets/libs/jquery-slimscroll/jquery.slimscroll.min.js") }}"></script>
+    <script src="{{ asset("_dashboard/assets/libs/metismenu/metisMenu.min.js") }}"></script>
+
+    <!-- Datatable js -->
+    <script src="{{ asset("_dashboard/assets/libs/datatables.net/js/jquery.dataTables.min.js") }}"></script>
+
+
+    <script src="{{ asset("_dashboard/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js") }}"></script>
+
+
+
+    <script src="{{ asset("_dashboard/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js") }}"></script>
+
+    <script src="{{ asset("_dashboard/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js") }}"></script>
+
+    <!-- KNOB JS -->
+    <script src="{{ asset("_dashboard/assets/libs/jquery-knob/jquery.knob.min.js") }}"></script>
+    <!-- App js -->
+
+    <script src="{{ asset("_dashboard/assets/js/jquery.core.js") }}"></script>
+
+    <script src="{{ asset("_dashboard/assets/js/jquery.app.js") }}"></script>
+
+    {{--Sweet alert--}}
+
+    <script src="{{ asset("_dashboard/assets/libs/sweetalert2/sweetalert2.min.js") }}"></script>
+
+
+    @include('script')
+
+
+    @yield("page_scripts")
+
+
+
+    @include('alertcon')
+</body>
 
 @endif
+
 </html>

@@ -15,6 +15,9 @@
 @extends('layouts.app')
 
 @section('page_content')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
 <div class="account-pages" style="padding-top: 0">
     <div class="row">
         <div class="col-12 col-lg-10 offset-lg-1">
@@ -102,27 +105,21 @@
 
                             </div>
                             <div class="row">
-                                <div class="form-group mb-3 col-12 col-md-4">
-                                    <select class="form-control" name="year_of_birth" required>
-                                        <option value="">Year of birth</option>
-                                        @for($year_of_birth = date("Y") - 40; $year_of_birth<date("Y"); $year_of_birth++)
-                                            <option value="{{ \Illuminate\Support\Carbon::create($year_of_birth)->year }}">{{ \Illuminate\Support\Carbon::create($year_of_birth)->year }}</option>
-                                            @endfor
-                                    </select>
+                                <div class="form-group mb-12 col-12 col-md-12">
+
+
+
+                                    <input
+                                        id="dob"
+                                        class="form-control"
+                                        name="dob"
+                                        type="text"
+                                        placeholder="Select date of birth" />
+
+
+
                                 </div>
-                                <div class="form-group mb-3 col-12 col-md-4">
-                                    <select class="form-control" name="month_of_birth" required>
-                                        <option value="">Month of birth</option>
-                                        @for($month_of_birth = 01; $month_of_birth<=12; $month_of_birth++)
-                                            <option value="{{ \Carbon\Carbon::create(null, $month_of_birth)->month }}">{{ \Carbon\Carbon::create(null, $month_of_birth)->englishMonth }}</option>
-                                            @endfor
-                                    </select>
-                                </div>
-                                <div class="form-group mb-3 col-12 col-md-4">
-                                    <select class="form-control" name="day_of_birth" required>
-                                        <option value="">Day of birth</option>
-                                    </select>
-                                </div>
+
                             </div>
                             <div class="row">
                                 <div class="form-group mb-3 col-12 col-md-4">
@@ -155,14 +152,7 @@
                             <div class="form-group">
                                 <textarea name="next_of_kin_address" placeholder="Next of kin address" class="form-control" required></textarea>
                             </div>
-                            <div class="form-group">
-                                <select class="form-control" name="nysc_status" >
-                                    <option value="">NYSC status</option>
-                                    <option value="Honorable Discharge">Honorable Discharge</option>
-                                    <option value="Exempted">Exempted</option>
-                                    <option value="In service">In Service</option>
-                                </select>
-                            </div>
+
                             <div class="row">
                                 <div class="form-group mb-3 col-12 col-md-6">
                                     <select class="form-control" name="had_disability" required>
@@ -395,6 +385,15 @@
 @endsection
 
 @section("page_scripts")
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr("#dob", {
+        dateFormat: "Y-m-d",
+        maxDate: "today",
+        yearSelectorType: "dropdown"
+    });
+</script>
+
 <script src="{{ asset('js/moment.min.js') }}"></script>
 <script type="text/javascript">
     const register_form = $(".account-content").find("form");

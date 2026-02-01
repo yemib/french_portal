@@ -1,4 +1,6 @@
+
 <div class="left-side-menu left-side-menu-dark">
+  
     <div class="slimscroll-menu">
         <!--- Sidemenu -->
         <div id="sidebar-menu">
@@ -74,7 +76,7 @@
                              <li>
                          
                            
-                              <a   href="/result_list_form">  <i class="mdi mdi-account-multiple text-info"></i>   <span>Result List  </span>   </a>
+                              <a   href="{{ route('results.index')}}">  <i class="mdi mdi-account-multiple text-info"></i>   <span>Results  </span>   </a>
                                
                                
                           </li>
@@ -271,5 +273,8 @@
         <!-- Sidebar -->
         <div class="clearfix"></div>
     </div>
+   
     <!-- Sidebar -left -->
 </div>
+
+

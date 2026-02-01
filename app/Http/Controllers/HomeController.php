@@ -176,8 +176,10 @@ class HomeController extends Controller
 
     public function uploadResults(Request $request)
     {
-        try {
+       /*  try { */
 
+
+            
             $this->validate($request, [
 
                 "from_date" =>  "bail|required",
@@ -190,7 +192,7 @@ class HomeController extends Controller
 
                 "session" => "bail|required",
 
-                "result_sheet" => "bail|required"
+                "result_sheet" => "required|file|mimes:xlsx,xls"
 
 
 
@@ -198,7 +200,9 @@ class HomeController extends Controller
 
             //the result is uploaded here 
 
+           
 
+                
 
             Excel::import(new CourseResultImport([
 
@@ -211,8 +215,9 @@ class HomeController extends Controller
 
             ]), request()->file('result_sheet'));
 
-
-
+            
+           
+                  //return  "yes" . $request->to_date;
 
             $all = array(
                 'from_date' => $request->from_date,
@@ -225,22 +230,17 @@ class HomeController extends Controller
 
 
 
-            return   view('admin.departments.results')->with($all);
-
-
-
-
-
+            return    redirect()->route('results.index');  
 
             // return redirect()->back()->with("danger", "Invalid Course");
 
-        } catch (ValidationException $exception) {
+       /*  } catch (ValidationException $exception) {
 
             return redirect()->back()->with("danger", $exception->validator->errors()->first());
         } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", "There was an error with your uploaded file, please try again" . $exception->getMessage());
-        }
+        } */
     }
 
 

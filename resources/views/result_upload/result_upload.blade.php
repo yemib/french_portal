@@ -5,163 +5,182 @@
 @section('page_content')
 
 <?php
-//program model  
-// school model  
-
-use App\Http\Models\program;
+use App\Http\Models\Program;
 use App\Http\Models\Setting;
 
-
-$program  = program::get();
-$school  = Setting::get();
-
-
+$program  = Program::get();
+$school   = Setting::get();
 ?>
 
+<style>
+    .card-header small {
+        opacity: 0.9;
+    }
 
-<div class="pt-1">
-    <div class="row mt-1">
-        <div class="col-12">
-            <div class="card-box">
+    .form-label {
+        font-size: 0.9rem;
+    }
 
-                <h4 class="m-t-0 header-title">Result Upload </h4>
+    .table th {
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
 
+    .alert-info {
+        border-left: 4px solid #0d6efd;
+    }
+</style>
+<div class="container-fluid pt-3">
 
-                <form action="course/students/upload-results" method="post" enctype="multipart/form-data">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
 
+            <div class="card shadow-sm border-0">
 
+                <!-- Header -->
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="mdi mdi-upload"></i> Result Upload
+                    </h4>
+                    <small>Upload student results using an Excel sheet</small>
+                </div>
 
+                <!-- Body -->
+                <div class="card-body">
 
-                    <label> Date : </label>
+                    <form action="course/students/upload-results" method="post" enctype="multipart/form-data">
+                        @csrf
 
-                    <div class="row">
-
-
-                        <div class="col-sm-3">
-
-
-                            From : <input class="form-control" required type="date" name="from_date" />
-
+                        <!-- Date Range -->
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-2">📅 Date Range</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">From</label>
+                                    <input class="form-control" required type="date" name="from_date">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">To</label>
+                                    <input class="form-control" required type="date" name="to_date">
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="col-sm-3">
+                        <hr>
 
+                        <!-- Program & School -->
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-2">🎓 Academic Information</h6>
 
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Select Program</label>
+                                    <select class="form-control" name="program">
+                                        @foreach($program as $program)
+                                            <option value="{{ $program->title }}">
+                                                {{ $program->title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Select School</label>
+                                    <select class="form-control" name="school">
+                                        @foreach($school as $school)
+                                            <option value="{{ $school->school_title }}">
+                                                {{ $school->school_title }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                            To : <input class="form-control" required type="date" name="to_date" />
-
+                                <div class="col-md-3">
+                                    <label class="form-label fw-semibold">Session</label>
+                                    <input required class="form-control" type="number" name="session" placeholder="e.g. 2024">
+                                </div>
+                            </div>
                         </div>
 
+                        <hr>
 
+                        <!-- Excel Format Guide -->
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-2">📄 Excel Sheet Format</h6>
+                            <div class="alert alert-info small">
+                                The uploaded Excel file must strictly follow the structure below.
+                            </div>
 
-                    </div>
-
-                    <div> <br /> </div>
-
-
-
-
-
-
-
-                    <div class="form-group mb-3 col-12 col-md-12">
-
-                        <label> Select Programs </label>
-
-                        <select class="form-control" name="program">
-                            <?php foreach ($program  as $program) {    ?>
-
-
-                                <option value="{{   $program->id }}"> {{ $program->title }} </option>
-
-                            <?php   } ?>
-
-                        </select>
-
-
-                    </div>
-
-
-                    <div class="form-group mb-3 col-12 col-md-12">
-
-                        <label> Select School </label>
-
-                        <select name="school" class="form-control">
-
-
-
-                            <?php foreach ($school as $school) {   ?>
-
-                                <option value="{{   $school->id  }}"> {{ $school->school_title  }} </option>
-
-                            <?php   } ?>
-
-                        </select>
-
-                    </div>
-
-                    <div class="form-group mb-3 col-3 col-md-3">
-                        <label> Session </label>
-
-                        <input required class="form-control" type="number" name="session">
-
-                    </div>
-
-
-                    <!---    place the format here   --->
-
-
-                    <div class="bulk-upload-guidelines-header">
-                        Excel sheet must have the following columns format
-                    </div>
-                    <table class="table table-bordered">
-                        <tr>
-                            <th> S/N</th>
-
-                            <th>Matric No</th>
-
-
-                            <th>Name</th>
-
-
-                            <th> courses.... </th>
-                            <th>Total </th>
-                            <th>Average </th>
-                            <th>Grade </th>
-                            <th>Remark </th>
-
-
-
-                        </tr>
-                    </table>
-
-
-
-                    <div class="form-group mb-3 col-12 col-md-12">
-                        <label class="btn btn-primary" for="file">Select Excel Sheet </label>
-                        <input style="" id="file" type="file" name="result_sheet" /> @csrf
-                        <div class="form-group mb-3 col-12 col-md-12"> <input class="btn btn-success" type="submit" value="submit" />
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm align-middle text-center">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>S/N</th>
+                                            <th>Matric No</th>
+                                            <th>Name</th>
+                                            <th>Sex</th>
+                                            <th>Group</th>
+                                            <th>Courses...</th>
+                                            <th>Total</th>
+                                            <th>Average</th>
+                                            <th>Grade</th>
+                                            <th>Remark</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
-                    </div>
 
+                        <hr>
 
+                        <!-- File Upload -->
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-2">📤 Upload Result Sheet</h6>
 
+                            <div class="d-flex align-items-center gap-3">
+                                <label for="file" class="btn btn-outline-primary">
+                                    <i class="mdi mdi-file-excel"></i> Choose Excel File
+                                </label>
+
+                                <input id="file" type="file" name="result_sheet" hidden>
+                               
+                            </div>
+
+                            
+
+                                <span style="font-weight: bolder;"  id="selected-file-name" class="text-muted">
+                                    No file selected
+                                </span>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="mdi mdi-check-circle-outline"></i> Submit Results
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
             </div>
+
         </div>
     </div>
 
-    </form>
-    @endsection
+</div>
 
-    @section("page_scripts")
-    <script>
-        $(document).ready(function() {
-            // Default Datatable
-            $('#students-table').DataTable({
-                searching: false,
-                lengthChange: false
-            });
-        });
-    </script>
-    @endsection
+@endsection
+
+
+@section("page_scripts")
+<script>
+    document.getElementById('file').addEventListener('change', function () {
+        const fileName = this.files.length > 0
+            ? this.files[0].name
+            : 'No file selected';
+
+        document.getElementById('selected-file-name').textContent = fileName;
+    });
+</script>
+@endsection

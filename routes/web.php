@@ -12,6 +12,7 @@
 */
 
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ResultController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Student\StudentController;
 use Carbon\Carbon;
@@ -32,6 +33,10 @@ Route::get('/', function () {
 
 
 Route::post("register_straight", [RegisterController::class,  'Register']);
+
+//download  application  
+
+
 
 
 Route::match(["GET", "POST"], "make-payment", [
@@ -56,16 +61,13 @@ Auth::routes();
 //result upload 
 
 
-Route::get('/upload_result', function () {
 
-    return  view('result_upload.result_upload');
-});
 
 
 // delele result path here  
 
 
-Route::get('/delete_cousrse/{from_date}/{program_id}/{school_id}/{session}', function ($from_date, $program_id, $school_id, $session) {
+/* Route::get('/delete_cousrse/{from_date}/{program_id}/{school_id}/{session}', function ($from_date, $program_id, $school_id, $session) {
 
     //delete from results_format and result ..
 
@@ -80,18 +82,29 @@ Route::get('/delete_cousrse/{from_date}/{program_id}/{school_id}/{session}', fun
 
     $result_format->delete();
 });
-
+ */
 
 //result list display  
 
 
 
-
+/* 
 Route::get('/result_list_form', function () {
 
     return  view('result_upload.result_list_form');
 });
+ */
 
+Route::get('/upload_result', function () {
+
+    return  view('result_upload.result_upload');
+})->name('upload-result');
+
+Route::get('/results', [ResultController::class, 'index'])->name('results.index');
+
+Route::post('/results/update', [ResultController::class, 'update'])->name('results.update');
+
+Route::post('/student/result/delete/', [ResultController::class, 'deletefunction'])->name('results.delete');
 
 //get the list of date in the result database based on program id  or name 
 
@@ -101,9 +114,6 @@ Route::get('/result_list_form', function () {
 Route::post('/date_list', function (Request  $request) {
 
     $result  = result::where('program_id', $request->program)->get();
-
-
-
 
     //this is just to echo a single date not all 
 
@@ -246,7 +256,7 @@ Route::post('registration_payment',   function (Request  $request) {
 Route::get('confirm_registration_code', function () {
 
     return   view('confirm_registration_code');
-});
+})->name('confirm_registration_code_view');
 
 
 
@@ -297,6 +307,9 @@ Route::post('confirm_registration_code', function (Request  $request) {
 
 
         if (isset($application_id->id)) {
+            $request->session()->put('download_application_form', $application_id->id);
+
+            return redirect()->route('view_application_now', ['id' => $application_id->id]);
 
             return view('download_application_pdf')->with("id",  $application_id->id);
         } else {
@@ -311,6 +324,7 @@ Route::post('confirm_registration_code', function (Request  $request) {
 
 
 
+Route::get('view_application/{id}',   [RegisterController::class, 'viewApplication'])->name('view_application_now');
 
 
 // direct payment 
@@ -387,19 +401,7 @@ Route::post('confirmpayment', function (Request  $request) {
 });
 
 
-
-
-
-
-
 //pay directly to the portal straigh without problem  ......
-
-
-
-
-
-
-
 
 
 

@@ -22,7 +22,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::orderby('id'  , 'desc' )->paginate(100);
+        $students = Student::orderby('id'  , 'desc' )->paginate(600);
         $departments = Department::all();
         $programs = Program::all();
         $schools = Setting::orderBy("school_title", "asc")->get();
