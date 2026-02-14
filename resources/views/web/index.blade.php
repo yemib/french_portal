@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset("images/Nigeria-French-Language-Village-NFLV.jpg") }}">
+    <link rel="shortcut icon" type="image/x-icon" href="https://frenchvillage.edu.ng/picture_logo/logo.png">
     <!-- Fonts -->
     <link rel="stylesheet" href="{{ asset("_new_web/fonts/lato/lato.css") }}">
     <!-- CSS -->
@@ -69,7 +69,7 @@
                                 <i class="icofont icofont-navigation-menu menu-open"></i>
                                 <i class="icofont icofont-close menu-close"></i>
                             </button>
-                            <a href="onepage-text-effect.html" class="logo navbar-brand"><img id="logo_img" src="{{ asset("images/Nigeria-French-Language-Village-NFLV.jpg") }}" alt="logo" height="50" style="height: 50px;" /></a>
+                            <a href="onepage-text-effect.html" class="logo navbar-brand"><img id="logo_img" src="https://frenchvillage.edu.ng/picture_logo/logo.png" alt="logo" height="50" style="height: 50px;" /></a>
                         </div>
 
                         <div class="main-menu onepage-nav collapse navbar-collapse float-right" id="main-menu">

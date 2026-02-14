@@ -45,6 +45,12 @@ Route::match(["GET", "POST"], "make-payment", [
 ]);
 
 
+Route::match(["GET", "POST"], "deny-student-access", [
+    "as" => "student.denyaccess",
+    "uses" => "Student\StudentController@denyaccess"
+]);
+
+
 
 
 
@@ -62,43 +68,7 @@ Auth::routes();
 
 
 
-
-
-// delele result path here  
-
-
-/* Route::get('/delete_cousrse/{from_date}/{program_id}/{school_id}/{session}', function ($from_date, $program_id, $school_id, $session) {
-
-    //delete from results_format and result ..
-
-
-    $result =  result::where('from_date', $from_date)->where('program_id',  $program_id)->where('school_id',  $school_id)->where('session', $session);
-
-
-    $result_format = results_format::where('from_date', $from_date)->where('program_id',  $program_id)->where('school_id',  $school_id)->where('session', $session);
-
-
-    $result->delete();
-
-    $result_format->delete();
-});
- */
-
-//result list display  
-
-
-
-/* 
-Route::get('/result_list_form', function () {
-
-    return  view('result_upload.result_list_form');
-});
- */
-
-Route::get('/upload_result', function () {
-
-    return  view('result_upload.result_upload');
-})->name('upload-result');
+Route::get('/upload_result', [ResultController::class ,  'upload'])->name('upload-result');
 
 Route::get('/results', [ResultController::class, 'index'])->name('results.index');
 
@@ -106,41 +76,12 @@ Route::post('/results/update', [ResultController::class, 'update'])->name('resul
 
 Route::post('/student/result/delete/', [ResultController::class, 'deletefunction'])->name('results.delete');
 
-//get the list of date in the result database based on program id  or name 
+Route::post('/results/update-courses', [ResultController::class, 'updateCourses'])->name('results.update.courses');
+
+Route::post('/results/toggle-publish', [ResultController::class, 'togglePublish'])->name('results.toggle.publish');
 
 
-
-
-Route::post('/date_list', function (Request  $request) {
-
-    $result  = result::where('program_id', $request->program)->get();
-
-    //this is just to echo a single date not all 
-
-    $diff = array();
-
-    foreach ($result as   $article) {
-
-
-
-        if (!in_array($article['from_date'], $diff)) {
-
-?>
-            <option value="<?php echo ($article['from_date']) ?>"> <?php echo ($article['from_date']) ?> </option>
-
-<?php
-
-        }
-
-
-
-
-
-        array_push($diff,  $article['from_date']);
-    }
-});
-
-
+//get the list of date in the result database based on program id  or name
 
 //registration form details and confirmation 
 
@@ -503,7 +444,7 @@ Route::group(['middleware' => 'custom_auth'], function () {
             Route::post("upload-results", [
                 "as" => "students.upload-results",
                 "uses" => "HomeController@uploadResults"
-            ]);
+            ])->middleware('resultUploaders');
         });
     });
 
