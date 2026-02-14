@@ -6,10 +6,12 @@ use App\Http\Models\Course;
 use App\Http\Models\Student;
 use App\Imports\CourseResultImport;
 use App\Imports\StudentsImport;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\File;
 
 class HomeController extends Controller
 {
@@ -176,65 +178,65 @@ class HomeController extends Controller
 
     public function uploadResults(Request $request)
     {
-       /*  try { */
-
-
-            
-            $this->validate($request, [
-
-                "from_date" =>  "bail|required",
-
-                "to_date" => "bail|required",
-
-                "program" => "bail|required",
-
-                "school" => "bail|required",
-
-                "session" => "bail|required",
-
-                "result_sheet" => "required|file|mimes:xlsx,xls"
+        /*  try { */
 
 
 
-            ]);
+        $this->validate($request, [
 
-            //the result is uploaded here 
+            "from_date" =>  "bail|required",
 
-           
+            "to_date" => "bail|required",
 
-                
+            "program" => "bail|required",
 
-            Excel::import(new CourseResultImport([
+            "school" => "bail|required",
 
-                "program" => $request->program,
-                "school" => $request->school,
-                "session" => $request->session,
-                "from_date" => $request->from_date,
-                "to_date" => $request->to_date,
-                "session" => $request->session
+            "session" => "bail|required",
 
-            ]), request()->file('result_sheet'));
+            "result_sheet" => "required|file|mimes:xlsx,xls"
 
-            
-           
-                  //return  "yes" . $request->to_date;
 
-            $all = array(
-                'from_date' => $request->from_date,
-                'program_id' => $request->program,
-                'school_id' => $request->school,
-                'session' => $request->session,
-                'success' => "Student results have been imported successfully"
-            );
+
+        ]);
+
+        //the result is uploaded here 
 
 
 
 
-            return    redirect()->route('results.index');  
 
-            // return redirect()->back()->with("danger", "Invalid Course");
+        Excel::import(new CourseResultImport([
 
-       /*  } catch (ValidationException $exception) {
+            "program" => $request->program,
+            "school" => $request->school,
+            "session" => $request->session,
+            "from_date" => $request->from_date,
+            "to_date" => $request->to_date,
+            "session" => $request->session
+
+        ]), request()->file('result_sheet'));
+
+
+
+        //return  "yes" . $request->to_date;
+
+        $all = array(
+            'from_date' => $request->from_date,
+            'program_id' => $request->program,
+            'school_id' => $request->school,
+            'session' => $request->session,
+            'success' => "Student results have been imported successfully"
+        );
+
+
+
+
+        return    redirect()->route('results.index');
+
+        // return redirect()->back()->with("danger", "Invalid Course");
+
+        /*  } catch (ValidationException $exception) {
 
             return redirect()->back()->with("danger", $exception->validator->errors()->first());
         } catch (\Exception $exception) {
@@ -343,21 +345,37 @@ class HomeController extends Controller
     public function changeAvatar(Request $request)
     {
         try {
-            $user = auth()->user();
 
-            $avatar = $request->file("avatar");
+              $request->validate([
+        'avatar' => 'required|image|mimes:jpg,jpeg,png|max:20048',
+    ]);
+            $user =  User::find( auth()->user()->id);
+
+          /*   $avatar = $request->file("avatar");
 
             $avatar_name = time() . "." . $avatar->getClientOriginalExtension();
+ */
+          
+            // Get the uploaded file
+            $passport =  $request->file("avatar");
 
-            //Storage::put("public/images/avatar/".$user->id."/".$avatar_name, file_get_contents($avatar));
+            // Create unique file name
+            $avatar_name = time() . '_' . uniqid() . '.' . $passport->getClientOriginalExtension();
+
+            // Define destination path
+            $destinationPath = public_path("storage/images/passport/");
+
+            // Create directory if it doesn't exist
+            if (!File::exists($destinationPath)) {
+                File::makeDirectory($destinationPath, 0755, true);
+            }
+
+            // Move the file
+            $passport->move($destinationPath, $avatar_name);
 
 
-            // $passport_name = time().".".$passport->getClientOriginalExtension();
-            //Storage::put("public/images/passport/".$passport_name, file_get_contents($passport));
-            $passport->move(public_path("images/avatar/" . $user->id . "/"), $avatar_name);
+            $user->avatar = "/storage/images/passport/". $avatar_name;
 
-
-            $user->avatar = $avatar_name;
             $user->save();
 
             return redirect()->back()->with("success", "Avatar has been saved successfully");

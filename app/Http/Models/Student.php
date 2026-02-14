@@ -133,8 +133,9 @@ class Student extends Model
     public function getCurrentAccommodationAttribute()
     {
         $current_session = Session::orderBy("start", "desc")->first();
+        $hostel  = HostelAllocation::/* where("student_id", $this->id)-> where("session_id", $current_session->id)->*/first();
 
-        return HostelAllocation::where("student_id", $this->id)->where("session_id", $current_session->id)->first();
+        return ($hostel) ? $hostel :  [];
     }
 
     public function downloadResult($format, $student, $session)
@@ -162,7 +163,7 @@ class Student extends Model
                 return "Chill, PDF download is coming soon!!!";
                 break;
             case "excel":
-                $students = Student::get();
+                $students = Student::where('active' ,  1)->get();
 
                 $studentArray = [];
                 $student_array = [];

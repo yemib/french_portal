@@ -17,11 +17,26 @@ class StudentMiddleware
     {
         if(auth()->check() && auth()->user()->account_type == 'student')
         {
+            
+
             // Check if Student has made payment for the current session
             $student = auth()->user()->student;
-            if($student->remita_payments/*->where("session", $student->current_session)*/->where("reason", "tuition")->where("paid", true)->count() > 0 /*&& $student->remita_payments->where("reason", "access")->where("paid", true)->count() > 0 */)
+               //check if student is activated and  deny access  
+
+               if($student->active  ==  false){
+
+                   return redirect()->route("student.denyaccess")->with("danger", "Access Denied");
+
+
+               }
+
+
+            if($student->remita_payments/*->where("session", $student->current_session)*/
+            ->where("reason", "tuition")->where("paid", true)->count() > 0 /*&& $student->remita_payments->where("reason", "access")->where("paid", true)->count() > 0 */)
             {
-                if($student->biodata)
+
+
+                if($student->biodata  )
                 {
                     return $next($request);
                 }

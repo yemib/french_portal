@@ -9,6 +9,7 @@ use App\Imports\StudentsImport;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Models\result;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -46,7 +47,9 @@ class StudentController extends Controller
     {
         if($student = Student::find($id))
         {
-            return view("supervisor.students.show", compact("student"));
+            //send the result  
+            $results =result::where([['matric' ,  $student->registration_number] ,  ['publish' , 1]])->orderby('id' ,  'desc')->get();
+            return view("supervisor.students.show", compact("student"   ,  "results"));
         }
 
         return redirect()->route("supervisor.student.index")->with("danger", "Invalid Student");

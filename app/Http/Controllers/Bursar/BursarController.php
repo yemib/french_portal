@@ -12,7 +12,7 @@ class BursarController extends Controller
     public function payments()
     {
         // $payments = Payment::get();
-        $payments = RemitaPayment::get();
+        $payments = RemitaPayment::orderby('id' , 'desc')->paginate(1000);
 
         return view("bursar.payments.index", compact("payments"));
     }
