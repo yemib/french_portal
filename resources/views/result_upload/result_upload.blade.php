@@ -48,7 +48,7 @@ $school   = Setting::get();
                 <!-- Body -->
                 <div class="card-body">
 
-                    <form action="course/students/upload-results" method="post" enctype="multipart/form-data">
+                    <form action="/course/students/upload-results" method="post" enctype="multipart/form-data">
                         @csrf
 
                         <!-- Date Range -->

@@ -19,8 +19,9 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Staff ID</th>
+                           <!--  <th>Staff ID</th> -->
                             <th>Full Name</th>
+                            <th>Email</th>
                             <!---   <th>Department</th>   --->
                             <!---  <th>Status</th>  --->
                             <th>
@@ -33,8 +34,9 @@
                         @foreach($lecturers as $lecturer)
                         <tr>
                             <th scope="row">{{ $i }}</th>
-                            <td>{{ $lecturer->staff_id }}</td>
+                            <!-- <td>{{ $lecturer->staff_id }}</td> -->
                             <td>{{ isset($lecturer->user->full_name) ? ucwords($lecturer->user->full_name) : '' }}</td>
+                            <td> @if(isset( $lecturer->user->email)) {{ $lecturer->user->email }} @endif</td>
 
                             <?php
 
@@ -57,7 +59,19 @@
                                     <button class="btn btn-danger btn-sm" type="submit">
                                         <i class="mdi mdi-delete"></i> Delete
                                     </button>
-                                    <div style="display: none">
+                                   
+
+                                </form>
+                            </td>
+                        </tr>
+
+
+
+                        <?php 
+                             /* 
+                             
+                                             <div style="display: none !important">
+                                       
                                         @if(isset($lecturer->user->id))
                                         @if($lecturer->user->account_type == "lecturer")
                                             <a href="{{ route("admin.lecturer.change-status", ["id" => $lecturer->id, "status" => "senior"]) }}" class="btn btn-success btn-sm"><i class="mdi mdi-check-circle"></i> Make Senior Lecturer</button>
@@ -69,9 +83,10 @@
 
                                     </div>
 
-                                </form>
-                            </td>
-                        </tr>
+                             */
+                        
+                        
+                        ?>
 
                         <div class="modal fade" id="editLecturer{{ $lecturer->id }}Modal" tabindex="-1" role="dialog" aria-labelledby="editLecturer{{ $lecturer->id }}ModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -89,17 +104,24 @@
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="form-group col-12 col-sm-6">
-                                                    <input class="form-control" type="text" id="surname" required name="surname" placeholder="Surname" value="{{ isset($lecturer->user->surname) ? $lecturer->user->surname : '' }}">
+                                                    <label>Surname</label>
+                                                    <input class="form-control" type="text" 
+                                                    id="surname" required name="surname"
+                                                     placeholder="Surname" value="{{ isset($lecturer->user->surname) ? $lecturer->user->surname : '' }}">
                                                 </div>
+
                                                 <div class="form-group col-12 col-sm-6">
+                                                    <lable>Other Names</lable>
                                                     <input class="form-control" type="text" id="other_names" required name="other_names" placeholder="Other Names" value="{{ isset($lecturer->user->other_names) ? $lecturer->user->other_names : '' }}">
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="form-group col-12 col-sm-6">
+                                                    <lable>Email Address</lable>
                                                     <input class="form-control" type="email" id="email" name="email" placeholder="Email Address (optional)" value="{{ isset($lecturer->user->email) ? $lecturer->user->email : '' }}">
                                                 </div>
                                                 <div class="form-group col-12 col-sm-6">
+                                                    <label>Gender</label>
                                                     <select class="form-control" id="gender" required name="gender">
                                                         <option value="">Gender</option>
                                                         <option value="male" @if(isset($lecturer->user->gender) && $lecturer->user->gender == "male") selected @endif>Male</option>
@@ -107,7 +129,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="row"  style="display: none  !important;">
                                                 <div class="form-group col-12 col-sm-6">
                                                     <input class="form-control" type="text" id="staff_id" name="staff_id" placeholder="Staff ID" value="{{ $lecturer->staff_id }}">
                                                 </div>
@@ -154,17 +176,21 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="form-group col-12 col-sm-6">
+                            <label>Surname</label>
                             <input class="form-control" type="text" id="surname" required name="surname" placeholder="Surname">
                         </div>
                         <div class="form-group col-12 col-sm-6">
+                            <label>Other Names</label>
                             <input class="form-control" type="text" id="other_names" required name="other_names" placeholder="Other Names">
                         </div>
                     </div>
                     <div class="row">
                         <div class="form-group col-12 col-sm-6">
+                            <label>Email</label>
                             <input class="form-control" type="email" id="email" name="email" placeholder="Email Address (optional)">
                         </div>
                         <div class="form-group col-12 col-sm-6">
+                            <label>Gender</label>
                             <select class="form-control" id="gender" required name="gender">
                                 <option value="">Gender</option>
                                 <option value="male">Male</option>
@@ -172,7 +198,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row">
+                    <div  style="display: none;" class="row">
                         <div class="form-group col-12 col-sm-6">
                             <input class="form-control" type="text" id="staff_id" name="staff_id" placeholder="Staff ID">
                         </div>

@@ -76,6 +76,8 @@
                 </div>
             </div>
         </div>
+
+        {{ $payments->links() }}
     </div>
 @endsection
 

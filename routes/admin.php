@@ -152,6 +152,12 @@ Route::get("lecturer/change-status/{id}/{status}", [
 
 Route::put("student/update-password", "StudentController@updatePassword")->name("admin.student.update-password");
 
+
+Route::get('deactivated_students'  ,"StudentController@deactivated_students"  )->name('admin.deactivated.students');
+Route::get('students_card_requests'  ,"StudentController@cardrequests"  )->name('admin.student.card.requests');
+
+
+
 Route::resource("student", "StudentController")->names([
     "index" => "admin.student.index",
     "show" => "admin.student.show",
@@ -160,15 +166,46 @@ Route::resource("student", "StudentController")->names([
     "destroy" => "admin.student.destroy",
 ]);
 
+
 Route::get("{id}/activate", [
     "as" => "admin.student.activate",
     "uses" => "StudentController@activate"
 ]);
 
+
+
+
+Route::get("{id}/approve", [
+    "as" => "admin.student.approve",
+    "uses" => "StudentController@approve"
+]);
+
+
+Route::get("{id}/deny", [
+    "as" => "admin.student.deny",
+    "uses" => "StudentController@deny"
+]);
+
+
+
 Route::get("{id}/deactivate", [
     "as" => "admin.student.deactivate",
     "uses" => "StudentController@deactivate"
 ]);
+
+//approve card request  
+Route::get("{id}/approve_card_request", [
+    "as" => "admin.student.approve_card_request",
+    "uses" => "StudentController@approvecard"
+]);
+
+//deny card request
+
+Route::get("{id}/deny_card_request", [
+    "as" => "admin.student.deny_card_request",
+    "uses" => "StudentController@denycard"
+]);
+
 
 Route::resource("session", "SessionController")->names([
     "index" => "admin.session.index",

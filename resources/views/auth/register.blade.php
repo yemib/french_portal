@@ -23,7 +23,7 @@
         <div class="col-12 col-lg-10 offset-lg-1">
             <div class="account-box" style="max-width: inherit">
                 <div class="account-logo-box text-center">
-                    <img src="{{ asset('images/Nigeria-French-Language-Village-NFLV.jpg') }}" alt="" style="max-height: 70px" class="img-fluid">
+                    <img src="https://frenchvillage.edu.ng/picture_logo/logo.png" alt="" style="max-height: 70px" class="img-fluid">
                     <div>
                         <h3 class="d-none">
                             {{ config('app.name') }}

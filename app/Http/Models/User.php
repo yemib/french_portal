@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Models\ApplicationForm;
 use App\Http\Models\Lecturer;
 use App\Http\Models\Setting;
 use App\Http\Models\Student;
@@ -72,6 +73,12 @@ class User extends Authenticatable
     public function student()
     {
         return $this->hasOne(Student::class);
+    }
+
+    
+    public function application()
+    {
+        return $this->hasOne(ApplicationForm::class);
     }
 
     public function school()

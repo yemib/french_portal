@@ -31,7 +31,7 @@
 <!-- ======== Start Navbar ======== -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="{{ route("home") }}"><img src="{{ asset("images/Nigeria-French-Language-Village-NFLV.jpg") }}" alt="logo" height="100px"></a>
+        <a class="navbar-brand" href="{{ route("home") }}"><img src="https://frenchvillage.edu.ng/picture_logo/logo.png" alt="logo" height="100px"></a>
         <button
                 class="navbar-toggler"
                 type="button"
@@ -749,7 +749,7 @@
 <!-- ======== Start Footer ======== -->
 <footer class="footer">
     <div class="container text-center">
-        <img src="{{ asset("images/Nigeria-French-Language-Village-NFLV.jpg") }}" alt="" height="60px">
+        <img src="https://frenchvillage.edu.ng/picture_logo/logo.png" alt="" height="60px">
         <p>© {{ date("Y") }} {{ config("app.name") }}. All rights reserved.</p>
     </div>
 </footer>

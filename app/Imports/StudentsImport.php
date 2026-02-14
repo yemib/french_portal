@@ -23,26 +23,34 @@ class StudentsImport implements ToModel
      */
     public function model(array $row)
     {
-        if(Student::where("registration_number", $row[0])->count() < 1)
-        {
-            $user = new User();
-            $password = strtolower($row[1]);
-            $user->surname = $row[1];
-            $user->other_names = $row[2];
-            $user->password = bcrypt($password);
-            $user->account_type = "student";
-            $user->school_id = $this->extra_array["school"];
-            $user->save();
+        if (Student::where("registration_number", $row[0])->count() < 1) {
+            //check if the student was upploaded before  
+            $check  =  User::where('email', $row[1])->first();
 
-            $student = new Student();
-            $student->user_id = $user->id;
-            $student->program_id = $this->extra_array["program"];
-            $student->department_id = $this->extra_array["department"];
-            $student->current_session = $this->extra_array["current_session"];
-            $student->registration_number = $row[0];
-            $student->save();
+            if (!$check) {
 
-            return $user;
+                $user = new User();
+                $user->email  =  $row[1];
+                $password = strtolower($row[2]);
+                $user->surname = $row[2];
+                $user->other_names = $row[3];
+                $user->password = bcrypt($password);
+                $user->account_type = "student";
+                $user->school_id = $this->extra_array["school"];
+                $user->save();
+
+                $student = new Student();
+                $student->user_id = $user->id;
+                $student->program_id = $this->extra_array["program"];
+                $student->department_id = $this->extra_array["department"];
+                $student->current_session = $this->extra_array["current_session"];
+                $student->registration_number = $row[0];
+                $student->save();
+
+                return $user;
+            }
+
+            return  null;
         }
 
         return null;

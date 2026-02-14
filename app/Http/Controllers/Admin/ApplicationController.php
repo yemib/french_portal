@@ -117,6 +117,7 @@ class ApplicationController extends Controller
                 $user->email = $application_form->email;
                 $user->gender = $application_form->sex;
                 $user->password = $password;
+                $user->avatar = "/storage/images/passport/".$application_form->passport ;
                 $user->account_type = "student";
                 $user->school_id = $get_school ? $get_school->id : null;
                 $user->save();
