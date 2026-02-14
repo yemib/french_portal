@@ -6,6 +6,7 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\BursarMiddleware;
 use App\Http\Middleware\CustomAuthMiddleware;
 use App\Http\Middleware\LecturerMiddleware;
+use App\Http\Middleware\ResultUploaders;
 use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\SupervisorMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -71,6 +72,7 @@ class Kernel extends HttpKernel
         'student' => StudentMiddleware::class,
         'lecturer' => LecturerMiddleware::class,
         "supervisor" => SupervisorMiddleware::class,
-        "bursar" => BursarMiddleware::class
+        "bursar" => BursarMiddleware::class,
+        'resultUploaders'=>ResultUploaders::class,
     ];
 }

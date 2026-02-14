@@ -17,8 +17,11 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        $students = Student::get();
-        $lecturers = Lecturer::get();
+        $students = Student::where('active' ,  1)->get();
+        $lecturers = User::where('account_type'  ,  'lecturer')->orwhere( 'account_type'  ,  'senior_lecturer' )->get();
+        $supervisor  = User::where('account_type'  ,  'supervisor')->get();
+        $bursar  = User::where('account_type'  ,  'bursar')->get();
+
         $hostels = Hostel::get();
         $settings = Setting::first();
         $sessions = Session::get();
@@ -29,9 +32,9 @@ class AdminController extends Controller
             $hostel_capacity += $hostel->rooms * $hostel->room_capacity;
         }
 
-        $users = User::orderByRaw("FIELD(account_type, 'super_admin', 'supervisor', 'senior_lecturer', 'lecturer', 'student') ASC")->get();
+        $users = User::orderByRaw("FIELD(account_type, 'super_admin', 'supervisor', 'bursar' ,'senior_lecturer', 'lecturer', 'student') ASC")->get();
 
-        return view("admin.dashboard", compact("students", "lecturers", "hostels", "settings", "users", "sessions", "hostel_capacity"));
+        return view("admin.dashboard", compact("students", "lecturers",  'supervisor', 'bursar', "hostels", "settings", "users", "sessions", "hostel_capacity"));
     }
 
     public function updateSettings(Request $request)

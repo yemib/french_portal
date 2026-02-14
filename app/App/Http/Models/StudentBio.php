@@ -10,16 +10,9 @@ class StudentBio extends Model
 {
     protected $table = "student_bio";
 
-    protected $fillable = [
-        "student_id",
-        "phone",
-        "dob",
-        "school_of_origin",
-        "state_of_origin",
-        "next_of_kin_name",
-        "next_of_kin_phone",
-        "next_of_kin_address",
-    ];
+ 
+
+    protected $guarded = [];
 
     public function student()
     {
