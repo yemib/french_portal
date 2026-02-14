@@ -70,7 +70,7 @@
             <div class="card-box">
                 <div class="student-profile-box text-center">
                     <div class="avatar mb-1">
-                        <img src="{{ asset((auth()->user()->avatar) ? "storage/images/avatar/".auth()->user()->id."/".auth()->user()->avatar : "_dashboard/assets/images/users/avatar-1.jpg") }}" class="img-fluid img-rounded img-thumbnail">
+                        <img src="{{ asset((auth()->user()->avatar) ? auth()->user()->avatar : "_dashboard/assets/images/users/avatar-1.jpg") }}" class="img-fluid img-rounded img-thumbnail">
                     </div>
                     <form method="post" action="{{ route("user.change-avatar") }}" enctype="multipart/form-data">
                         @csrf

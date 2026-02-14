@@ -4,7 +4,9 @@
 
         <ul class="list-unstyled topbar-right-menu float-right mb-0">
             <li class="dropdown notification-list d-none">
-                <a class="nav-link dropdown-toggle arrow-none" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                <a class="nav-link dropdown-toggle arrow-none" 
+                data-toggle="dropdown" href="#" role="button" 
+                aria-haspopup="false" aria-expanded="false">
                     <i class="dripicons-bell noti-icon"></i> <span class="badge badge-info noti-icon-badge">21</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated dropdown-lg">
@@ -68,7 +70,7 @@
             </li>
             <li class="dropdown notification-list">
                 <a class="nav-link dropdown-toggle nav-user" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                    <img src="{{ asset((auth()->user()->avatar) ? "storage/images/avatar/".auth()->user()->id."/".auth()->user()->avatar : "_dashboard/assets/images/users/avatar-1.jpg") }}" alt="user" class="rounded-circle"> <span class="ml-1">{{ ucwords(auth()->user()->full_name) }}<i class="mdi mdi-chevron-down"></i>
+                    <img src="{{ asset((auth()->user()->avatar) ? auth()->user()->avatar : "_dashboard/assets/images/users/avatar-1.jpg") }}" alt="user" class="rounded-circle"> <span class="ml-1">{{ ucwords(auth()->user()->full_name) }}<i class="mdi mdi-chevron-down"></i>
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-animated profile-dropdown">
@@ -88,10 +90,10 @@
             <li class="float-left">
                 <a href="{{ route("home") }}" class="logo">
                     <span class="logo-lg">
-                        <img src="{{ asset("images/Nigeria-French-Language-Village-NFLV.jpg") }}" alt="">
+                        <img src="https://frenchvillage.edu.ng/picture_logo/logo.png" alt="">
                     </span>
                     <span class="logo-sm">
-                        <img src="{{ asset("images/logo-sm.png") }}" alt="">
+                        <img src="https://frenchvillage.edu.ng/picture_logo/logo.png" alt="">
                     </span>
                 </a>
             </li>

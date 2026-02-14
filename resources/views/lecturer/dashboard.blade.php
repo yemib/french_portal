@@ -39,7 +39,7 @@
                 <div class="student-profile-box text-center p-2">
                    
                     <div class="avatar mb-1">
-                        <img src="{{ asset(($user->avatar) ? "storage/images/avatar/".$user->id."/".$user->avatar : "_dashboard/assets/images/users/avatar-1.jpg") }}" class="img-fluid img-rounded img-thumbnail">
+                        <img src="{{ asset(($user->avatar) ? $user->avatar : "_dashboard/assets/images/users/avatar-1.jpg") }}" class="img-fluid img-rounded img-thumbnail">
                     </div>
                     
                     <div class="mt-1">

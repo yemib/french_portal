@@ -10,6 +10,8 @@ use App\Imports\StudentsImport;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Models\RemitaPayment;
+use App\Http\Models\result;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -22,13 +24,36 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students = Student::orderby('id'  , 'desc' )->paginate(600);
+        $students = Student::orderby('id', 'desc')->where('active',  1)->paginate(300);
         $departments = Department::all();
         $programs = Program::all();
         $schools = Setting::orderBy("school_title", "asc")->get();
 
         return view("admin.students.index", compact("students", "departments", "programs", "schools"));
     }
+
+    public function deactivated_students()
+    {
+        $students = Student::orderby('id', 'desc')->where('active',  0)->paginate(600);
+        $departments = Department::all();
+        $programs = Program::all();
+        $schools = Setting::orderBy("school_title", "asc")->get();
+
+        return view("admin.students.index", compact("students", "departments", "programs", "schools"));
+    }
+
+       public function cardrequests()
+    {
+        $students = Student::orderby('id', 'desc')->where('card_request',  "requested")->paginate(600);
+        $departments = Department::all();
+        $programs = Program::all();
+        $schools = Setting::orderBy("school_title", "asc")->get();
+
+        return view("admin.students.cardrequest", compact("students", "departments", "programs", "schools"));
+    }
+
+
+    
 
     /**
      * Show the form for creating a new resource.
@@ -79,13 +104,17 @@ class StudentController extends Controller
             $student->current_session = $request->current_session;
             $student->save();
 
+            return response()->json(['success' => true]);
+
             return redirect()->back()->with("success", "Student has been added successfully");
+        } catch (ValidationException $exception) {
 
-        } catch(ValidationException $exception) {
+              return response()->json(['success' => false , 'message'=> $exception->validator->errors()->first() ]);
 
-            return redirect()->back()->with("danger", $exception->validator->errors()->first());
+           // return redirect()->back()->with("danger", $exception->validator->errors()->first());
+        } catch (\Exception $exception) {
 
-        } catch(\Exception $exception) {
+             return response()->json(['success' => false , 'message'=>$exception->getMessage() ]);
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
@@ -99,9 +128,10 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        if($student = Student::find($id))
-        {
-            return view("admin.students.show", compact("student"));
+        if ($student = Student::find($id)) {
+             //send the result  
+            $results =result::where([['matric' ,  $student->registration_number] ,  ['publish' , 1]])->orderby('id' ,  'desc')->get();
+            return view("admin.students.show", compact("student"  ,  "results"));
         }
 
         return redirect()->route("admin.student.index")->with("danger", "Invalid Student");
@@ -111,8 +141,7 @@ class StudentController extends Controller
     {
         try {
 
-            if($student = Student::find($id))
-            {
+            if ($student = Student::find($id)) {
                 $student->active = true;
                 $student->save();
 
@@ -120,19 +149,55 @@ class StudentController extends Controller
             }
 
             return redirect()->back()->with("danger", "Invalid student");
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
+    }
+
+
+    public function approve($id)
+    {
+        //add  or activate student payment.  
+        $check  =  RemitaPayment::where('student_id',  $id)->where('reason',  "tuition")->orderby('id',  'desc')->first();
+        if ($check) {
+            $check->paid  =  1;
+            $check->save();
+        } else {
+            $student  =  Student::find($id);
+            //save the payment  
+            $save =  new RemitaPayment();
+            $save->student_id  =  $id;
+            $save->rrr  =  "fromadmin";
+            $save->amount  =  $student->program->tuition;
+            $save->reason =     "tuition";
+            $save->paid = 1;
+            $save->session = $student->current_session;
+            $save->save();
+        }
+
+        return  response()->json(['success' => true]);
+    }
+
+
+    public function deny($id)
+    {
+
+        //add  or activate student payment.  
+        $check  =  RemitaPayment::where('student_id',  $id)->where('reason',  "tuition")->orderby('id',  'desc')->first();
+        if ($check) {
+            $check->paid  =  0;
+            $check->save();
+        }
+
+        return  response()->json(['success' => true]);
     }
 
     public function deactivate($id)
     {
         try {
 
-            if($student = Student::find($id))
-            {
+            if ($student = Student::find($id)) {
                 $student->active = false;
                 $student->save();
 
@@ -140,12 +205,59 @@ class StudentController extends Controller
             }
 
             return redirect()->back()->with("danger", "Invalid student");
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
     }
+
+
+        public function  approvecard($id){
+
+
+            try {
+
+            if ($student = Student::find($id)) {
+                $student->card_request = "approved";
+                $student->save();
+
+                return redirect()->back()->with("success", "Student has been activated successfully");
+            }
+
+            return redirect()->back()->with("danger", "Invalid student");
+        } catch (\Exception $exception) {
+
+            return redirect()->back()->with("danger", $exception->getMessage());
+        }
+
+
+        
+    }
+
+
+    
+        public function  denycard($id){
+
+
+            try {
+
+            if ($student = Student::find($id)) {
+                $student->card_request = "rejected";
+                $student->save();
+
+                return redirect()->back()->with("success", "Student card has been deactivated successfully");
+            }
+
+            return redirect()->back()->with("danger", "Invalid student");
+        } catch (\Exception $exception) {
+
+            return redirect()->back()->with("danger", $exception->getMessage());
+        }
+
+
+        
+    }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -179,10 +291,8 @@ class StudentController extends Controller
                 "school" => "bail|required"
             ]);
 
-            if($student = Student::find($id))
-            {
-                if(($request->registration_number != $student->registration_number) && (Student::where("registration_number", $request->registration_number)->count() > 0))
-                {
+            if ($student = Student::find($id)) {
+                if (($request->registration_number != $student->registration_number) && (Student::where("registration_number", $request->registration_number)->count() > 0)) {
                     return redirect()->back()->with("danger", "The registration number has already been taken.");
                 }
 
@@ -202,16 +312,16 @@ class StudentController extends Controller
                 $student->current_session = $request->current_session;
                 $student->save();
 
+                return response()->json(['success' => true]);
+
                 return redirect()->back()->with("success", "Student has been updated successfully");
             }
 
             return redirect()->back()->with("danger", "Invalid student");
-
-        } catch(ValidationException $exception) {
+        } catch (ValidationException $exception) {
 
             return redirect()->back()->with("danger", $exception->validator->errors()->first());
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
@@ -225,22 +335,21 @@ class StudentController extends Controller
                 "student_id" => "bail|required|integer"
             ]);
 
-            if($student = Student::find($request->student_id))
-            {
+            if ($student = Student::find($request->student_id)) {
                 $user = $student->user;
                 $user->password = bcrypt($request->password);
                 $user->save();
+
+                return response()->json(['success' => true]);
 
                 return redirect()->back()->with("success", "Student password has been updated successfully");
             }
 
             return redirect()->back()->with("danger", "Invalid student");
-
-        } catch(ValidationException $exception) {
+        } catch (ValidationException $exception) {
 
             return redirect()->back()->with("danger", $exception->validator->errors()->first());
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
@@ -256,17 +365,16 @@ class StudentController extends Controller
     {
         try {
 
-            if($student = Student::find($id))
-            {
+            if ($student = Student::find($id)) {
                 $student->delete();
                 $student->user->delete();
+                return response()->json(['success' => true]);
 
                 return redirect()->back()->with("success", "Student has been removed successfully");
             }
 
             return redirect()->back()->with("danger", "Invalid student");
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }

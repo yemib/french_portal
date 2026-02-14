@@ -47,8 +47,8 @@ class LecturerController extends Controller
                 "surname" => "bail|required|string",
                 "other_names" => "bail|required|string",
                 "gender" => "bail|required|string",
-               
-                "staff_id" => "bail|required|string|unique:lecturers",
+
+              /*   "staff_id" => "bail|required|string|unique:lecturers", */
                 "email" => "unique:users"
             ]);
 
@@ -65,16 +65,14 @@ class LecturerController extends Controller
             $lecturer = new Lecturer();
             $lecturer->user_id = $user->id;
             $lecturer->department_id = 1;
-            $lecturer->staff_id = $request->staff_id;
+            $lecturer->staff_id =   " ";  /* $request->staff_id; */
             $lecturer->save();
 
             return redirect()->back()->with("success", "Lecturer has been added successfully");
-
-        } catch(ValidationException $exception) {
+        } catch (ValidationException $exception) {
 
             return redirect()->back()->with("danger", $exception->validator->errors()->first());
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
@@ -120,10 +118,8 @@ class LecturerController extends Controller
                 "staff_id" => "bail|required|string"
             ]);
 
-            if($lecturer = Lecturer::find($id))
-            {
-                if(($request->staff_id != $lecturer->staff_id) && (Lecturer::where("staff_id", $request->staff_id)->count() > 0))
-                {
+            if ($lecturer = Lecturer::find($id)) {
+                if (($request->staff_id != $lecturer->staff_id) && (Lecturer::where("staff_id", $request->staff_id)->count() > 0)) {
                     return redirect()->back()->with("danger", "The staff id has already been taken.");
                 }
 
@@ -142,12 +138,10 @@ class LecturerController extends Controller
             }
 
             return redirect()->back()->with("danger", "Invalid lecturer");
-
-        } catch(ValidationException $exception) {
+        } catch (ValidationException $exception) {
 
             return redirect()->back()->with("danger", $exception->validator->errors()->first());
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
@@ -163,11 +157,9 @@ class LecturerController extends Controller
     public function changeStatus($id, $status)
     {
         try {
-            if($lecturer = Lecturer::find($id))
-            {
+            if ($lecturer = Lecturer::find($id)) {
                 $user = $lecturer->user;
-                switch ($status)
-                {
+                switch ($status) {
                     case "senior":
                         $user->account_type = "senior_lecturer";
                         break;
@@ -181,12 +173,10 @@ class LecturerController extends Controller
             }
 
             return redirect()->back()->with("danger", "Invalid lecturer");
-
-        } catch(ValidationException $exception) {
+        } catch (ValidationException $exception) {
 
             return redirect()->back()->with("danger", $exception->validator->errors()->first());
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
@@ -202,8 +192,7 @@ class LecturerController extends Controller
     {
         try {
 
-            if($lecturer = Lecturer::find($id))
-            {
+            if ($lecturer = Lecturer::find($id)) {
                 $lecturer->delete();
                 $lecturer->user->delete();
 
@@ -211,8 +200,7 @@ class LecturerController extends Controller
             }
 
             return redirect()->back()->with("danger", "Invalid lecturer");
-
-        } catch(\Exception $exception) {
+        } catch (\Exception $exception) {
 
             return redirect()->back()->with("danger", $exception->getMessage());
         }
