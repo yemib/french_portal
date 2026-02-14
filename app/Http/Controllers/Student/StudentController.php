@@ -19,7 +19,11 @@ use Illuminate\Support\Facades\App;
 use Unirest;
 use Carbon\Carbon;
 use App\Http\Models\RemitaPayment;
+use App\Http\Models\result;
 use App\User;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 
 
 class StudentController extends Controller
@@ -32,6 +36,51 @@ class StudentController extends Controller
         //$user->student->assignHostel();
 
         return view("student.dashboard", compact("user"));
+    }
+
+
+    public function denyaccess()
+    {
+
+        return  view("student.denyaccess");
+    }
+
+
+    public function  cardrequest(){
+
+       
+
+
+      $user  =   auth()->user() ;
+
+       //ensure the  student  passport  is  uploaded    
+
+       if(empty($user->avatar)){
+
+        return  redirect(route("user.manage-settings"))->with(['danger'=>"Please Upload Passport Before Card Request"]);
+       }
+
+
+
+      $student  =  Student::where('user_id'   ,  $user->id)->first();  
+      $student->card_request  =  "requested" ;  
+      $student->save()  ;  
+
+      return   redirect()->back()->with(['success'  =>  "successful"]);
+
+      
+
+    }
+
+    public function  result()
+    {
+
+        $results = result::where('matric', auth()->user()->student->registration_number)
+            ->where('publish', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('student.results', compact('results'));
     }
 
     public function session($session_count)
@@ -109,18 +158,79 @@ class StudentController extends Controller
             if ($request->isMethod("post")) {
                 $this->validate($request, []);
 
+
+
+                $table = 'student_bio';
+
+                // Remove unwanted fields
+                $data = collect($request->all())
+                    ->except(['_token', 'id'])
+                    ->toArray();
+
+                $data['student_id']   =  $user->student->id;
+
+
+
+                // Create missing columns
+                Schema::table($table, function (Blueprint $tableBlueprint) use ($data, $table) {
+                    foreach ($data as $column => $value) {
+
+                        if (!Schema::hasColumn($table, $column)) {
+                            // Detect column type automatically
+                         
+                                $tableBlueprint->text($column)->nullable();
+                            
+                        }
+                    }
+                });
+
+
+
+              
+
+                    // Ensure a file was uploaded and is valid
+                    if ($request->hasFile('signature') ) {
+
+                        $passport = $request->file('signature');
+
+                        // Extra server-side check of allowed extensions
+                        $allowed = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+                        $extension = strtolower($passport->getClientOriginalExtension());
+                        if (!in_array($extension, $allowed)) {
+                            return redirect()->back()->with("danger", "Signature  must be an image (jpg, jpeg, png, gif, bmp).");
+                        }
+
+                        // Generate a unique filename to avoid collisions
+                        $passport_name = time() . '_' . uniqid() . '.' . $extension;
+
+                        // Ensure destination directory exists
+                        $destinationPath = public_path('storage/images/passport');
+                        if (!file_exists($destinationPath)) {
+                            mkdir($destinationPath, 0755, true);
+                        }
+
+                        // Move the uploaded file
+                        $passport->move($destinationPath, $passport_name);
+
+                        $data['signature'] = '/storage/images/passport/' . $passport_name;
+                    }
+
                 if (!$bio = $user->student->biodata) {
-                    $bio = new StudentBio();
-                    $bio->student_id = $user->student->id;
+
+                    $save =   StudentBio::create($data);
+                    //$bio->student_id = $user->student->id;
+                }else{
+                        //update it  
+
+                       
+
+                        $save =  StudentBio::where('student_id' , $user->student->id)->first();
+                        $save->update($data);
+
+
+
                 }
-                $bio->state_of_origin = $request->state_of_origin;
-                $bio->school_of_origin = $request->school_of_origin;
-                $bio->phone = $request->phone;
-                $bio->dob = $request->date_of_birth;
-                $bio->next_of_kin_name = $request->next_of_kin;
-                $bio->next_of_kin_phone = $request->next_of_kin_phone;
-                $bio->next_of_kin_address = $request->next_of_kin_address;
-                $bio->save();
+
 
                 return redirect()->back()->with("success", "Information saved successfully");
             }

@@ -22,3 +22,6 @@ Route::get("download-hostel-allocation-form", [
     "as" => "student.download-hostel-allocation-form",
     "uses" => "StudentController@downloadHostelAllocationForm"
 ]);
+
+Route::get('results'   ,  "StudentController@result" )->name('student.results.dashboard');
+Route::get('card-request'   ,  "StudentController@cardrequest" )->name('student.card.request');

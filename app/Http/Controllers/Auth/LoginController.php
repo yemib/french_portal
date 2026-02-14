@@ -98,13 +98,15 @@ class LoginController extends Controller
 
     static function trySignIn(Request $request, $type = null)
     {
+
+        $remember  =  true ;
         switch ($type)
         {
             case "email":
                 if(auth()->attempt([
                     "email" => $request->user_id,
                     "password" => $request->password
-                ], $request->remember))
+                ],  $remember ))
                 {
                     return true;
                 }
@@ -116,7 +118,7 @@ class LoginController extends Controller
                     if(auth()->attempt([
                         "id" => $lecturer->user->id,
                         "password" => $request->password
-                    ], $request->remember))
+                    ],  $remember ))
                     {
                         return true;
                     }
@@ -127,7 +129,7 @@ class LoginController extends Controller
                     if(auth()->attempt([
                         "id" => $student->user->id,
                         "password" => $request->password
-                    ], $request->remember))
+                    ],  $remember ))
                     {
                         $student->assignHostel();
 
